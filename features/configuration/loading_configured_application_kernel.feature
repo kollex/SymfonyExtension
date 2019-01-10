@@ -83,7 +83,7 @@ Feature: Loading configured application kernel
             protected function configureContainer(ContainerBuilder $container, LoaderInterface $loader): void
             {
                 $container->loadFromExtension('framework', [
-                    'test' => true,
+                    'test' => $this->getEnvironment() === 'test',
                     'secret' => 'Pigeon',
                 ]);
 
@@ -132,7 +132,7 @@ Feature: Loading configured application kernel
             protected function configureContainer(ContainerBuilder $container, LoaderInterface $loader): void
             {
                 $container->loadFromExtension('framework', [
-                    'test' => true,
+                    'test' => $this->getEnvironment() === 'test',
                     'secret' => 'Pigeon',
                 ]);
 
