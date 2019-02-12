@@ -1,6 +1,6 @@
 Feature: Context initializer compatibility
 
-    Background:
+    Scenario: Using class resolvers while handling context environment
         Given a working Symfony application with SymfonyExtension configured
         And a Behat configuration containing:
         """
@@ -66,18 +66,6 @@ Feature: Context initializer compatibility
                 assert($this->shouldPass === true);
             }
         }
-        """
-
-    Scenario: Using context initializers while handling context environment for vanilla contexts
-        When I run Behat
-        Then it should pass
-
-    Scenario: Using context initializers while handling context environment for contexts as a service
-        Given a YAML services file containing:
-        """
-        services:
-            App\Tests\SomeContext:
-                public: true
         """
         When I run Behat
         Then it should pass
