@@ -49,7 +49,7 @@ final class InitializedSymfonyExtensionEnvironment implements SymfonyExtensionEn
     {
         $callable = $callee->getCallable();
 
-        if (is_array($callable) && $callee->isAnInstanceMethod()) {
+        if ($callee->isAnInstanceMethod()) {
             return [$this->getContext($callable[0]), $callable[1]];
         }
 
@@ -72,11 +72,9 @@ final class InitializedSymfonyExtensionEnvironment implements SymfonyExtensionEn
     }
 
     /**
-     * @see http://behat.org/en/latest/cookbooks/accessing_contexts_from_each_other.html
-     *
      * @throws ContextNotFoundException
      */
-    public function getContext(string $class): Context
+    private function getContext(string $class): Context
     {
         if (!isset($this->contexts[$class])) {
             throw new ContextNotFoundException(sprintf(
