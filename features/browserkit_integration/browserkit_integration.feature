@@ -22,8 +22,40 @@ Feature: BrowserKit integration
                 When I visit the page "/hello-world"
                 Then I should see "Hello world!" on the page
         """
+        And a context file "tests/SomeContext.php" containing:
+        """
+        <?php
 
-    Scenario: Injecting KernelBrowser manually
+        namespace App\Tests;
+
+        use Behat\Behat\Context\Context;
+        use FriendsOfBehat\SymfonyExtension\Mink\MinkParameters;
+        use Psr\Container\ContainerInterface;
+        use Symfony\Component\BrowserKit\Client;
+
+        final class SomeContext implements Context {
+            private $client;
+
+            public function __construct(Client $client)
+            {
+                $this->client = $client;
+            }
+
+            /** @When I visit the page :page */
+            public function visitPage(string $page): void
+            {
+                $this->client->request('GET', $page);
+            }
+
+            /** @Then I should see :content on the page */
+            public function shouldSeeContentOnPage(string $content): void
+            {
+                assert(false !== strpos($this->client->getResponse()->getContent(), $content));
+            }
+        }
+        """
+
+    Scenario: Injecting BrowserKit client
         Given a YAML services file containing:
             """
             services:
@@ -32,43 +64,10 @@ Feature: BrowserKit integration
                     arguments:
                         - '@test.client'
             """
-        And a context file "tests/SomeContext.php" containing:
-        """
-        <?php
-
-        namespace App\Tests;
-
-        use Behat\Behat\Context\Context;
-        use FriendsOfBehat\SymfonyExtension\Mink\MinkParameters;
-        use Psr\Container\ContainerInterface;
-        use Symfony\Bundle\FrameworkBundle\KernelBrowser;
-
-        final class SomeContext implements Context {
-            /** @var KernelBrowser */
-            private $client;
-
-            public function __construct(KernelBrowser $client)
-            {
-                $this->client = $client;
-            }
-
-            /** @When I visit the page :page */
-            public function visitPage(string $page): void
-            {
-                $this->client->request('GET', $page);
-            }
-
-            /** @Then I should see :content on the page */
-            public function shouldSeeContentOnPage(string $content): void
-            {
-                assert(false !== strpos($this->client->getResponse()->getContent(), $content));
-            }
-        }
-        """
         When I run Behat
         Then it should pass
 
-    Scenario: Autowiring and autoconfiguring KernelBrowser client
+    Scenario: Autowiring and autoconfiguring BrowserKit client
         Given a YAML services file containing:
             """
             services:
@@ -78,84 +77,5 @@ Feature: BrowserKit integration
 
                 App\Tests\SomeContext: ~
             """
-        And a context file "tests/SomeContext.php" containing:
-        """
-        <?php
-
-        namespace App\Tests;
-
-        use Behat\Behat\Context\Context;
-        use FriendsOfBehat\SymfonyExtension\Mink\MinkParameters;
-        use Psr\Container\ContainerInterface;
-        use Symfony\Bundle\FrameworkBundle\KernelBrowser;
-
-        final class SomeContext implements Context {
-            /** @var KernelBrowser */
-            private $client;
-
-            public function __construct(KernelBrowser $client)
-            {
-                $this->client = $client;
-            }
-
-            /** @When I visit the page :page */
-            public function visitPage(string $page): void
-            {
-                $this->client->request('GET', $page);
-            }
-
-            /** @Then I should see :content on the page */
-            public function shouldSeeContentOnPage(string $content): void
-            {
-                assert(false !== strpos($this->client->getResponse()->getContent(), $content));
-            }
-        }
-        """
-        When I run Behat
-        Then it should pass
-
-    Scenario: Autowiring and autoconfiguring HttpKernelBrowser client
-        Given a YAML services file containing:
-            """
-            services:
-                _defaults:
-                    autowire: true
-                    autoconfigure: true
-
-                App\Tests\SomeContext: ~
-            """
-        And a context file "tests/SomeContext.php" containing:
-        """
-        <?php
-
-        namespace App\Tests;
-
-        use Behat\Behat\Context\Context;
-        use FriendsOfBehat\SymfonyExtension\Mink\MinkParameters;
-        use Psr\Container\ContainerInterface;
-        use Symfony\Component\HttpKernel\HttpKernelBrowser;
-
-        final class SomeContext implements Context {
-            /** @var HttpKernelBrowser */
-            private $client;
-
-            public function __construct(HttpKernelBrowser $client)
-            {
-                $this->client = $client;
-            }
-
-            /** @When I visit the page :page */
-            public function visitPage(string $page): void
-            {
-                $this->client->request('GET', $page);
-            }
-
-            /** @Then I should see :content on the page */
-            public function shouldSeeContentOnPage(string $content): void
-            {
-                assert(false !== strpos($this->client->getResponse()->getContent(), $content));
-            }
-        }
-        """
         When I run Behat
         Then it should pass
