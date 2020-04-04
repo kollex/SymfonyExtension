@@ -24,6 +24,7 @@ Feature: Accessing driver's service container
                 Given the counter service is zeroed
                 When I visit the page "/hello-world"
                 Then the counter service should return 1
+
         """
         And a context file "tests/SomeContext.php" containing:
         """
@@ -38,12 +39,12 @@ Feature: Accessing driver's service container
 
         final class SomeContext implements Context {
             private $mink;
-            private $driverContainer;
+            private $container;
 
-            public function __construct(Mink $mink, ContainerInterface $driverContainer)
+            public function __construct(Mink $mink, ContainerInterface $container)
             {
                 $this->mink = $mink;
-                $this->driverContainer = $driverContainer;
+                $this->container = $container;
             }
 
             /** @Given the counter service is zeroed */
@@ -66,33 +67,39 @@ Feature: Accessing driver's service container
 
             private function getCounterService(): Counter
             {
-                return $this->driverContainer->get('App\Counter');
+                return $this->container
+                    ->get('behat.service_container')
+                    ->get('fob_symfony.driver_kernel')
+                    ->getContainer()
+                    ->get('test.service_container')
+                    ->get('App\Counter')
+                ;
             }
         }
         """
 
-    Scenario: Accessing a service from driver's service container (manually injected dependencies)
+    Scenario: Injecting Mink serivce
         Given a YAML services file containing:
-        """
-        services:
-            App\Tests\SomeContext:
-                public: true
-                arguments:
-                    - '@behat.mink'
-                    - '@behat.driver.service_container'
-        """
+            """
+            services:
+                App\Tests\SomeContext:
+                    public: true
+                    arguments:
+                        - '@behat.mink'
+                        - '@service_container'
+            """
         When I run Behat
         Then it should pass
 
-    Scenario: Accessing a service from driver's service container (autowired & autoconfigured dependencies)
+    Scenario: Autowiring and autoconfiguring Mink service
         Given a YAML services file containing:
-        """
-        services:
-            _defaults:
-                autowire: true
-                autoconfigure: true
+            """
+            services:
+                _defaults:
+                    autowire: true
+                    autoconfigure: true
 
-            App\Tests\SomeContext: ~
-        """
+                App\Tests\SomeContext: ~
+            """
         When I run Behat
         Then it should pass
