@@ -78,7 +78,8 @@ CON
      */
     public function workingSymfonyApplicationWithExtension(): void
     {
-        $this->thereIsConfiguration(<<<'CON'
+        $this->thereIsConfiguration(
+            <<<'CON'
 default:
     extensions:
         FriendsOfBehat\SymfonyExtension:
@@ -89,7 +90,9 @@ CON
 
         $this->standardSymfonyAutoloaderConfigured();
 
-        $this->thereIsFile('src/Kernel.php', <<<'CON'
+        $this->thereIsFile(
+            'src/Kernel.php',
+            <<<'CON'
 <?php
 
 declare(strict_types=1);
@@ -100,7 +103,7 @@ use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Kernel as HttpKernel;
-use Symfony\Component\Routing\RouteCollectionBuilder;
+use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
 
 class Kernel extends HttpKernel
 {
@@ -125,15 +128,24 @@ class Kernel extends HttpKernel
         $loader->load(__DIR__ . '/../config/services.yaml');
     }
     
-    protected function configureRoutes(RouteCollectionBuilder $routes): void
+    protected function configureRoutes($routes): void
     {
-        $routes->add('/hello-world', 'App\Controller:helloWorld');
+        if ($routes instanceof RoutingConfigurator) { // available since Symfony 5.1
+            $routes
+                ->add('app_hello', '/hello-world')
+                ->controller('App\Controller::helloWorld')
+            ;
+        } else { // support Symfony 4.4  
+            $routes->add('/hello-world', 'App\Controller:helloWorld');
+        }
     }
 }
 CON
         );
 
-        $this->thereIsFile('src/Controller.php', <<<'CON'
+        $this->thereIsFile(
+            'src/Controller.php',
+            <<<'CON'
 <?php
 
 declare(strict_types=1);
@@ -155,13 +167,15 @@ final class Controller
     {
         $this->counter->increase();
     
-        return new Response('Hello world!');
+        return new Response('Hello world! The counter value is ' . $this->counter->get());
     }
 }
 CON
         );
 
-        $this->thereIsFile('src/Counter.php', <<<'CON'
+        $this->thereIsFile(
+            'src/Counter.php',
+            <<<'CON'
 <?php
 
 declare(strict_types=1);
@@ -185,7 +199,9 @@ final class Counter
 CON
         );
 
-        $this->thereIsFile('config/default.yaml', <<<'YML'
+        $this->thereIsFile(
+            'config/default.yaml',
+            <<<'YML'
 services:
     App\Controller:
         arguments:
@@ -294,7 +310,7 @@ YML
         }
 
         throw new \DomainException(
-            'Behat was expecting to pass, but failed with the following output:' . \PHP_EOL . \PHP_EOL . $this->getProcessOutput()
+            'Behat was expecting to pass, but failed with the following output:' . \PHP_EOL . \PHP_EOL . $this->getProcessOutput(),
         );
     }
 
@@ -317,7 +333,7 @@ YML
         }
 
         throw new \DomainException(
-            'Behat was expecting to fail, but passed with the following output:' . \PHP_EOL . \PHP_EOL . $this->getProcessOutput()
+            'Behat was expecting to fail, but passed with the following output:' . \PHP_EOL . \PHP_EOL . $this->getProcessOutput(),
         );
     }
 
@@ -355,7 +371,7 @@ YML
             throw new \DomainException(sprintf(
                 'Pattern "%s" does not match the following output:' . \PHP_EOL . \PHP_EOL . '%s',
                 $pattern,
-                $output
+                $output,
             ));
         }
     }

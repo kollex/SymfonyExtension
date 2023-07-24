@@ -1,8 +1,8 @@
 name: Build
 
 on:
-    push: ~
-    pull_request: ~
+    push:
+    pull_request:
     release:
         types: [created]
     schedule:
@@ -10,47 +10,116 @@ on:
             cron: "0 1 * * 6" # Run at 1am every Saturday
 
 jobs:
-    tests:
-        runs-on: ubuntu-latest
-        name: "PHP ${{ matrix.php }}, Symfony ${{ matrix.symfony }}"
+    test:
+        name: PHP ${{ matrix.php-version }} + Symfony ${{ matrix.symfony-version }}
+        runs-on: ubuntu-22.04
         strategy:
             fail-fast: false
             matrix:
-                php: ["7.3", "7.4", "8.0"]
-                symfony: ["4.4.*", "5.1.*"]
-
+                php-version:
+                    - '7.4'
+                    - '8.0'
+                    - '8.1'
+                symfony-version:
+                    - '4.4.*'
+                    - '5.4.*'
+                    - '6.0.*'
+                    - '6.1.*'
+                exclude:
+                    - php-version: '7.4'
+                      symfony-version: '6.0.*'
+                    - php-version: '7.4'
+                      symfony-version: '6.1.*'
+                    - php-version: '8.0'
+                      symfony-version: '6.1.*'
         steps:
-            -
-                uses: actions/checkout@v2
+            - name: Checkout
+              uses: actions/checkout@v3
 
-            -
-                name: Setup PHP
-                uses: shivammathur/setup-php@v2
-                with:
-                    php-version: "${{ matrix.php }}"
-                    coverage: none
+            - name: Setup PHP
+              uses: shivammathur/setup-php@v2
+              with:
+                  coverage: none
+                  ini-values: "memory_limit=-1, zend.assertions=1"
+                  php-version: ${{ matrix.php-version }}
+                  tools: composer:v2, flex
 
-            -
-                name: Update Symfony version
-                if: matrix.symfony != ''
-                run: |
-                    composer require symfony/dependency-injection:${{ matrix.symfony }} --no-update --no-scripts
-                    composer require symfony/http-kernel:${{ matrix.symfony }} --no-update --no-scripts
-                    composer require symfony/proxy-manager-bridge:${{ matrix.symfony }} --no-update --no-scripts
+            # This works around SYMFONY_REQUIRE currently not working (https://github.com/symfony/flex/issues/946):
+            - name: Lock Symfony version
+              run: VERSION=${{ matrix.symfony-version }} .github/workflows/lock-symfony-version.sh
 
-                    composer require --dev symfony/browser-kit:${{ matrix.symfony }} --no-update --no-scripts
-                    composer require --dev symfony/framework-bundle:${{ matrix.symfony }} --no-update --no-scripts
-                    composer require --dev symfony/process:${{ matrix.symfony }} --no-update --no-scripts
-                    composer require --dev symfony/yaml:${{ matrix.symfony }} --no-update --no-scripts
+            - name: Install dependencies
+              run: |
+                  composer config --no-plugins allow-plugins.dealerdirect/phpcodesniffer-composer-installer true
+                  composer install --prefer-dist --no-progress --no-plugins
+              #env:
+              #    SYMFONY_REQUIRE: "${{ matrix.symfony-version }}"
 
-            -
-                name: Install dependencies
-                run: composer update
+            - name: Run tests
+              run: composer test
 
-            -
-                name: Run analysis
-                run: composer analyse
+    psalm:
+        name: Run Psalm
+        runs-on: ubuntu-22.04
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v3
 
-            -
-                name: Run tests
-                run: composer test
+            - name: Setup PHP
+              uses: shivammathur/setup-php@v2
+              with:
+                  coverage: none
+                  ini-values: "memory_limit=-1, zend.assertions=1"
+                  php-version: 7.4
+                  tools: composer:v2, flex
+
+            - name: Install dependencies
+              run: |
+                  composer config --no-plugins allow-plugins.dealerdirect/phpcodesniffer-composer-installer true
+                  composer install --prefer-dist --no-progress --no-plugins
+
+            - name: Run Psalm
+              run: vendor/bin/psalm src --no-progress
+
+    validate-composer:
+        name: Validate composer.json
+        runs-on: ubuntu-22.04
+        continue-on-error: false
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v3
+
+            - name: Setup PHP
+              uses: shivammathur/setup-php@v2
+              with:
+                  coverage: none
+                  ini-values: "memory_limit=-1, zend.assertions=1"
+                  php-version: 8.1
+                  tools: composer:v2, flex
+
+            - name: Validate composer.json
+              run: composer validate --strict
+
+    coding-standards:
+        name: Validate Coding Standards
+        runs-on: ubuntu-22.04
+        continue-on-error: false
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v3
+
+            - name: Setup PHP
+              uses: shivammathur/setup-php@v2
+              with:
+                  coverage: none
+                  ini-values: "memory_limit=-1, zend.assertions=1"
+                  php-version: 8.1
+                  tools: composer:v2, flex
+
+            - name: Install dependencies
+              run: |
+                  composer config --no-plugins allow-plugins.dealerdirect/phpcodesniffer-composer-installer true
+                  composer install --prefer-dist --no-progress
+
+            - name: Run coding standard
+              run: vendor/bin/ecs check --ansi --no-progress-bar src tests

@@ -72,7 +72,7 @@ final class SymfonyExtension implements Extension
 
     public function load(ContainerBuilder $container, array $config): void
     {
-        $this->fallbackToTestEnvironment();
+        $this->setupTestEnvironment($config['kernel']['environment'] ?? 'test');
 
         $this->loadBootstrap($this->autodiscoverBootstrap($config['bootstrap']));
 
@@ -135,7 +135,7 @@ final class SymfonyExtension implements Extension
 
     private function loadKernelRebooter(ContainerBuilder $container): void
     {
-        $definition = new Definition(KernelOrchestrator::class, [new Reference(self::KERNEL_ID), $container]);
+        $definition = new Definition(KernelOrchestrator::class, [new Reference(self::KERNEL_ID), new Reference(self::DRIVER_KERNEL_ID), $container]);
         $definition->addTag(EventDispatcherExtension::SUBSCRIBER_TAG);
 
         $container->setDefinition('fob_symfony.kernel_orchestrator', $definition);
@@ -183,11 +183,11 @@ final class SymfonyExtension implements Extension
         require_once $bootstrap;
     }
 
-    private function fallbackToTestEnvironment(): void
+    private function setupTestEnvironment(string $fallback): void
     {
-        // If there's no defined server / environment variable with an environment, default to test
+        // If there's no defined server / environment variable with an environment, default to configured fallback
         if (($_SERVER['APP_ENV'] ?? $_ENV['APP_ENV'] ?? null) === null) {
-            putenv('APP_ENV=' . $_SERVER['APP_ENV'] = $_ENV['APP_ENV'] = 'test');
+            putenv('APP_ENV=' . $_SERVER['APP_ENV'] = $_ENV['APP_ENV'] = $fallback);
         }
     }
 
@@ -223,7 +223,7 @@ final class SymfonyExtension implements Extension
         if ($autodiscovered !== 1) {
             throw new \RuntimeException(
                 'Could not autodiscover the application kernel. ' .
-                'Please define it manually with "FriendsOfBehat\SymfonyExtension.kernel" configuration option.'
+                'Please define it manually with "FriendsOfBehat\SymfonyExtension.kernel" configuration option.',
             );
         }
 
@@ -261,7 +261,7 @@ final class SymfonyExtension implements Extension
             throw new \RuntimeException(
                 'Could not autodiscover the bootstrap file. ' .
                 'Please define it manually with "FriendsOfBehat\SymfonyExtension.bootstrap" configuration option. ' .
-                'Setting that option to "false" disables autodiscovering.'
+                'Setting that option to "false" disables autodiscovering.',
             );
         }
 
