@@ -1,67 +1,50 @@
 <?php
 
+declare(strict_types=1);
+
 namespace FriendsOfBehat\SymfonyExtension\Driver\Factory;
 
+use Behat\Mink\Driver\BrowserKitDriver;
 use Behat\MinkExtension\ServiceContainer\Driver\DriverFactory;
 use FriendsOfBehat\SymfonyExtension\Driver\SymfonyDriver;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
 
-/**
- * @author Kamil Kokot <kamil@kokot.me>
- */
 final class SymfonyDriverFactory implements DriverFactory
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     private $name;
 
-    /**
-     * @var Reference
-     */
+    /** @var Reference */
     private $kernel;
 
-    /**
-     * @param string $name
-     * @param Reference $kernel
-     */
-    public function __construct($name, Reference $kernel)
+    public function __construct(string $name, Reference $kernel)
     {
         $this->name = $name;
         $this->kernel = $kernel;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getDriverName()
+    public function getDriverName(): string
     {
         return $this->name;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function supportsJavascript()
+    public function supportsJavascript(): bool
     {
         return false;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function configure(ArrayNodeDefinition $builder)
+    public function configure(ArrayNodeDefinition $builder): void
     {
-
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function buildDriver(array $config)
+    public function buildDriver(array $config): Definition
     {
+        if (!class_exists(BrowserKitDriver::class)) {
+            throw new \RuntimeException('Install "friends-of-behat/mink-browserkit-driver" (drop-in replacement for "behat/mink-browserkit-driver") in order to use the "symfony" driver.');
+        }
+
         return new Definition(SymfonyDriver::class, [
             $this->kernel,
             '%mink.base_url%',

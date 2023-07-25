@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace FriendsOfBehat\SymfonyExtension\ServiceContainer;
 
 use Behat\Behat\Context\ServiceContainer\ContextExtension;
-use Behat\Mink\Mink;
 use Behat\Mink\Session;
 use Behat\MinkExtension\ServiceContainer\MinkExtension;
 use Behat\Testwork\Environment\ServiceContainer\EnvironmentExtension;
@@ -38,8 +37,7 @@ final class SymfonyExtension implements Extension
      */
     public const DRIVER_KERNEL_ID = 'fob_symfony.driver_kernel';
 
-    /** @var bool */
-    private $minkExtensionFound = false;
+    private bool $minkExtensionFound = false;
 
     public function getConfigKey(): string
     {
@@ -50,7 +48,10 @@ final class SymfonyExtension implements Extension
     {
         $this->registerMinkDriver($extensionManager);
     }
-
+    /**
+     * @psalm-suppress UndefinedInterfaceMethod
+     * @psalm-suppress ReservedWord
+     */
     public function configure(ArrayNodeDefinition $builder): void
     {
         $builder

@@ -4,10 +4,15 @@ declare(strict_types=1);
 
 namespace FriendsOfBehat\SymfonyExtension\Mink;
 
+use ArrayAccess;
+use IteratorAggregate;
 use ReturnTypeWillChange;
 
-/** @final */
-class MinkParameters implements \Countable, \IteratorAggregate, \ArrayAccess
+/**
+ * @template-implements ArrayAccess<int,int>
+ * @template-implements IteratorAggregate<string, int>
+ */
+class MinkParameters implements \Countable, IteratorAggregate, ArrayAccess
 {
     /** @var array */
     private $minkParameters;
@@ -27,9 +32,6 @@ class MinkParameters implements \Countable, \IteratorAggregate, \ArrayAccess
         return array_key_exists($offset, $this->minkParameters);
     }
 
-    /**
-     * @return mixed
-     */
     #[ReturnTypeWillChange]
     public function offsetGet($offset)
     {

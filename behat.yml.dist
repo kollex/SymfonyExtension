@@ -1,3 +1,5 @@
 default:
-    extensions:
-        FriendsOfBehat\SymfonyExtension: ~
+    suites:
+        default:
+            contexts:
+                - Tests\Behat\Context\TestContext

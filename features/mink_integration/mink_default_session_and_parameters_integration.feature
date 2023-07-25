@@ -1,8 +1,4 @@
-<<<<<<<< HEAD:features/mink_integration/mink_default_session_and_parameters_integration.feature
 Feature: Mink default session and parameters integration
-========
-Feature: Mink integration
->>>>>>>> 9e9529c (Add tests for context initializers):features/mink_integration/mink_integration.feature
 
     Background:
         Given a working Symfony application with SymfonyExtension configured

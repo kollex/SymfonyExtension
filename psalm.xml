@@ -1,11 +1,12 @@
 <?xml version="1.0"?>
 <psalm
-    totallyTyped="true"
-    errorLevel="4"
-    resolveFromConfigFile="true"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns="https://getpsalm.org/schema/config"
-    xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
+        errorLevel="5"
+        resolveFromConfigFile="true"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="https://getpsalm.org/schema/config"
+        xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
+        cacheDirectory="./.github/psalm/cache/"
+        errorBaseline="./.github/psalm/psalm.baseline.xml"
 >
     <projectFiles>
         <directory name="src" />
@@ -17,9 +18,31 @@
     <issueHandlers>
         <UndefinedClass>
             <errorLevel type="suppress">
-                <referencedClass name="Symfony\Component\BrowserKit\AbstractBrowser" />
-                <referencedClass name="Symfony\Component\BrowserKit\Client" />
+                <!-- These classes have been added in PHP 8.1 -->
+                <referencedClass name="BackedEnum"/>
+                <referencedClass name="ReflectionIntersectionType"/>
+                <referencedClass name="UnitEnum"/>
+                <!-- These classes have been added in PHP 8.2 -->
+                <referencedClass name="Random\*"/>
             </errorLevel>
         </UndefinedClass>
+        <UndefinedDocblockClass>
+            <errorLevel type="suppress">
+                <!-- These classes have been added in PHP 8.1 -->
+                <referencedClass name="BackedEnum"/>
+                <referencedClass name="ReflectionIntersectionType"/>
+                <referencedClass name="UnitEnum"/>
+            </errorLevel>
+        </UndefinedDocblockClass>
+        <UndefinedAttributeClass>
+            <errorLevel type="suppress">
+                <!-- These classes have been added in PHP 8.2 -->
+                <referencedClass name="SensitiveParameter"/>
+            </errorLevel>
+        </UndefinedAttributeClass>
     </issueHandlers>
+
+    <forbiddenFunctions>
+        <function name="empty"/>
+    </forbiddenFunctions>
 </psalm>

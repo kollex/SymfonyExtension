@@ -10,6 +10,7 @@ use Behat\Mink\Session;
 use FriendsOfBehat\SymfonyExtension\Mink\MinkParameters;
 use FriendsOfBehat\SymfonyExtension\ServiceContainer\SymfonyExtension;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
+use Symfony\Component\BrowserKit\Client;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -78,8 +79,8 @@ final class FriendsOfBehatSymfonyExtensionExtension extends Extension implements
             return;
         }
 
-        if (class_exists(\Symfony\Component\BrowserKit\AbstractBrowser::class)) {
-            $container->setAlias(\Symfony\Component\BrowserKit\AbstractBrowser::class, 'test.client');
+        if (class_exists(Client::class)) {
+            $container->setAlias(Client::class, 'test.client');
         }
 
         $container->setAlias(KernelBrowser::class, 'test.client');
@@ -101,6 +102,7 @@ final class FriendsOfBehatSymfonyExtensionExtension extends Extension implements
     {
         $minkDefinition = new Definition(Mink::class, ['fob_symfony.mink']);
         $minkDefinition->setPublic(true);
+        $minkDefinition->setLazy(true);
         $minkDefinition->setFactory([new Reference('behat.service_container'), 'get']);
 
         $container->setDefinition('behat.mink', $minkDefinition);

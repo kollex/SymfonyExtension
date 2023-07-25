@@ -1,5 +1,69 @@
 # CHANGELOG FOR `2.1.x`
 
+## v2.2.0 (2021-02-04)
+
+#### TL;DR
+
+- **Added support for PHP 8** ([#134](https://github.com/FriendsOfBehat/SymfonyExtension/issues/134))
+
+#### Details
+
+- [#121](https://github.com/FriendsOfBehat/SymfonyExtension/issues/121) Require PHP ^7.2 ([@pamil](https://github.com/pamil))
+- [#130](https://github.com/FriendsOfBehat/SymfonyExtension/issues/130) Missing class for Symfony 5 ([@cv65kr](https://github.com/cv65kr), [@pamil](https://github.com/pamil))
+- [#134](https://github.com/FriendsOfBehat/SymfonyExtension/issues/134) Add support for PHP 8 ([@dunglas](https://github.com/dunglas))
+- [#136](https://github.com/FriendsOfBehat/SymfonyExtension/issues/136) Bump dependencies to Symfony ^4.4|^5.1 ([@pamil](https://github.com/pamil))
+- [#137](https://github.com/FriendsOfBehat/SymfonyExtension/issues/137) Bump dependencies to PHP ^7.3|^8.0 ([@pamil](https://github.com/pamil))
+- [#139](https://github.com/FriendsOfBehat/SymfonyExtension/issues/139) Switch from Travis to GitHub Actions ([@pamil](https://github.com/pamil))
+- [#140](https://github.com/FriendsOfBehat/SymfonyExtension/issues/140) Upgrade to Psalm v4.1.1 ([@pamil](https://github.com/pamil))
+- [#141](https://github.com/FriendsOfBehat/SymfonyExtension/issues/141) Fix the build for PHP 8 ([@pamil](https://github.com/pamil))
+
+## v2.1.0 (2020-04-04)
+
+#### TL;DR
+
+- **Added support for Symfony 5** ([#100](https://github.com/FriendsOfBehat/SymfonyExtension/issues/100))
+- **Added support for PHP 7.4** ([#107](https://github.com/FriendsOfBehat/SymfonyExtension/issues/107))
+- Added integration with FriendsOfBehat/PageObjectExtension ([#105](https://github.com/FriendsOfBehat/SymfonyExtension/issues/105))
+- Added integration with BrowserKit ([#82](https://github.com/FriendsOfBehat/SymfonyExtension/issues/82))
+- Exposed Mink service ([#69](https://github.com/FriendsOfBehat/SymfonyExtension/issues/69))
+- Exposed Mink's driver service container ([#116](https://github.com/FriendsOfBehat/SymfonyExtension/issues/116))
+- Removed support for Symfony 3.4 ([#118](https://github.com/FriendsOfBehat/SymfonyExtension/issues/118))
+
+#### Details
+
+- [#60](https://github.com/FriendsOfBehat/SymfonyExtension/issues/60) Remove support for Symfony 4.1 as it's EOLed ([@pamil](https://github.com/pamil))
+- [#69](https://github.com/FriendsOfBehat/SymfonyExtension/issues/69) Expose the Mink service ([@pamil](https://github.com/pamil))
+- [#82](https://github.com/FriendsOfBehat/SymfonyExtension/issues/82) Provide simple BrowserKit integration ([@pamil](https://github.com/pamil))
+- [#98](https://github.com/FriendsOfBehat/SymfonyExtension/issues/98) Add Symfony 4.3.* build to Travis CI ([@pamil](https://github.com/pamil))
+- [#100](https://github.com/FriendsOfBehat/SymfonyExtension/issues/100) Add support for Symfony 4.4 and 5.0; remove for 4.2 and 4.3 ([@pamil](https://github.com/pamil))
+- [#105](https://github.com/FriendsOfBehat/SymfonyExtension/issues/105) Add integration with FriendsOfBehat/PageObjectExtension ([@pamil](https://github.com/pamil))
+- [#107](https://github.com/FriendsOfBehat/SymfonyExtension/issues/107) Add support for PHP 7.4 ([@pamil](https://github.com/pamil))
+- [#108](https://github.com/FriendsOfBehat/SymfonyExtension/issues/108) Add compatibility with Symfony 5 ([@pamil](https://github.com/pamil))
+- [#114](https://github.com/FriendsOfBehat/SymfonyExtension/issues/114) Remove conflict with Symplify libraries ([@pamil](https://github.com/pamil))
+- [#115](https://github.com/FriendsOfBehat/SymfonyExtension/issues/115) Add safety check for SymfonyDriverFactory to make sure BrowserKitDriver is installed ([@pamil](https://github.com/pamil))
+- [#116](https://github.com/FriendsOfBehat/SymfonyExtension/issues/116) Accessing tested application services easily via driver's service container ([@pamil](https://github.com/pamil))
+- [#117](https://github.com/FriendsOfBehat/SymfonyExtension/issues/117) Mention friends-of-behat forks of Mink-related repositories in the docs ([@pamil](https://github.com/pamil))
+- [#118](https://github.com/FriendsOfBehat/SymfonyExtension/issues/118) Remove support for Symfony 3.4 ([@pamil](https://github.com/pamil))
+- [#119](https://github.com/FriendsOfBehat/SymfonyExtension/issues/119) Fix a weird bug causing failures in Sylius ([@pamil](https://github.com/pamil))
+- [#120](https://github.com/FriendsOfBehat/SymfonyExtension/issues/120) Recommend Mink forks in suggests section of composer.json ([@pamil](https://github.com/pamil))
+
+## v2.1.0-RC.2 (2020-04-04)
+
+- [#114](https://github.com/FriendsOfBehat/SymfonyExtension/issues/114) Remove conflict with Symplify libraries ([@pamil](https://github.com/pamil))
+- [#120](https://github.com/FriendsOfBehat/SymfonyExtension/issues/120) Recommend Mink forks in suggests section of composer.json ([@pamil](https://github.com/pamil))
+
+## v2.1.0-RC.1 (2020-04-04)
+
+- [#119](https://github.com/FriendsOfBehat/SymfonyExtension/issues/119) Fix a weird bug causing failures in Sylius ([@pamil](https://github.com/pamil))
+
+## v2.1.0-BETA.2 (2020-04-04)
+
+- [#107](https://github.com/FriendsOfBehat/SymfonyExtension/issues/107) Add support for PHP 7.4 ([@pamil](https://github.com/pamil))
+- [#115](https://github.com/FriendsOfBehat/SymfonyExtension/issues/115) Add safety check for SymfonyDriverFactory to make sure BrowserKitDriver is installed ([@pamil](https://github.com/pamil))
+- [#116](https://github.com/FriendsOfBehat/SymfonyExtension/issues/116) Accessing tested application services easily via driver's service container ([@pamil](https://github.com/pamil))
+- [#117](https://github.com/FriendsOfBehat/SymfonyExtension/issues/117) Mention friends-of-behat forks of Mink-related repositories in the docs ([@pamil](https://github.com/pamil))
+- [#118](https://github.com/FriendsOfBehat/SymfonyExtension/issues/118) Remove support for Symfony 3.4 ([@pamil](https://github.com/pamil))
+
 ## v2.1.0-BETA.1 (2020-01-15)
 
 - [#60](https://github.com/FriendsOfBehat/SymfonyExtension/issues/60) Remove support for Symfony 4.1 as it's EOLed ([@pamil](https://github.com/pamil))
