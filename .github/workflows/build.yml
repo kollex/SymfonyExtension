@@ -58,7 +58,7 @@ jobs:
               with:
                   coverage: none
                   ini-values: "memory_limit=-1, zend.assertions=1"
-                  php-version: 8.1
+                  php-version: 8.2
                   tools: composer:v2, flex
 
             - name: Install dependencies
@@ -82,7 +82,7 @@ jobs:
               with:
                   coverage: none
                   ini-values: "memory_limit=-1, zend.assertions=1"
-                  php-version: 8.1
+                  php-version: 8.2
                   tools: composer:v2, flex
 
             - name: Validate composer.json
@@ -101,7 +101,7 @@ jobs:
               with:
                   coverage: none
                   ini-values: "memory_limit=-1, zend.assertions=1"
-                  php-version: 8.1
+                  php-version: 8.2
                   tools: composer:v2, flex
 
             - name: Install dependencies
