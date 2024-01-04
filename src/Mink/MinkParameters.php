@@ -14,12 +14,8 @@ use ReturnTypeWillChange;
  */
 class MinkParameters implements \Countable, IteratorAggregate, ArrayAccess
 {
-    /** @var array */
-    private $minkParameters;
-
-    public function __construct(array $minkParameters)
+    public function __construct(private array $minkParameters)
     {
-        $this->minkParameters = $minkParameters;
     }
 
     public function getIterator(): \Traversable

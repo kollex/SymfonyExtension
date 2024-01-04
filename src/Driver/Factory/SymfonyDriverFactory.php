@@ -11,18 +11,10 @@ use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
 
-final class SymfonyDriverFactory implements DriverFactory
+final readonly class SymfonyDriverFactory implements DriverFactory
 {
-    /** @var string */
-    private $name;
-
-    /** @var Reference */
-    private $kernel;
-
-    public function __construct(string $name, Reference $kernel)
+    public function __construct(private string $name, private Reference $kernel)
     {
-        $this->name = $name;
-        $this->kernel = $kernel;
     }
 
     public function getDriverName(): string

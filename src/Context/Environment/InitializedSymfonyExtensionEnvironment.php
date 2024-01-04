@@ -24,20 +24,16 @@ use FriendsOfBehat\SymfonyExtension\Context\Environment\Handler\ContextServiceEn
  */
 final class InitializedSymfonyExtensionEnvironment implements SymfonyExtensionEnvironment
 {
-    /** @var Suite */
-    private $suite;
-
     /** @var Context[] */
     private $contexts = [];
 
-    public function __construct(Suite $suite)
+    public function __construct(private readonly Suite $suite)
     {
-        $this->suite = $suite;
     }
 
     public function registerContext(Context $context): void
     {
-        $this->contexts[get_class($context)] = $context;
+        $this->contexts[$context::class] = $context;
     }
 
     public function getSuite(): Suite

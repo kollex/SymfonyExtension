@@ -10,22 +10,10 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
 
-final class KernelOrchestrator implements EventSubscriberInterface
+final readonly class KernelOrchestrator implements EventSubscriberInterface
 {
-    /** @var KernelInterface */
-    private $symfonyKernel;
-
-    /** @var KernelInterface */
-    private $driverKernel;
-
-    /** @var ContainerInterface */
-    private $behatContainer;
-
-    public function __construct(KernelInterface $symfonyKernel, KernelInterface $driverKernel, ContainerInterface $behatContainer)
+    public function __construct(private KernelInterface $symfonyKernel, private KernelInterface $driverKernel, private ContainerInterface $behatContainer)
     {
-        $this->symfonyKernel = $symfonyKernel;
-        $this->driverKernel = $driverKernel;
-        $this->behatContainer = $behatContainer;
     }
 
     public static function getSubscribedEvents(): array

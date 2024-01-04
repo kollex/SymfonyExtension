@@ -10,22 +10,13 @@ use Symfony\Component\HttpKernel\KernelInterface;
 
 final class SymfonyDriver extends BrowserKitDriver
 {
-    /** @var KernelInterface */
-    private $kernel;
-
-    /** @var string|null */
-    private $baseUrl;
-
-    public function __construct(KernelInterface $kernel, ?string $baseUrl)
+    public function __construct(private readonly KernelInterface $kernel, private readonly ?string $baseUrl)
     {
-        $this->kernel = $kernel;
-        $this->baseUrl = $baseUrl;
-
         if (!$this->kernel->getContainer()->has('test.client')) {
             throw new \RuntimeException(sprintf(
                 'Kernel "%s" used by Behat with "%s" environment and debug %s does not have "test.client" service. ' . "\n" .
                 'Please make sure the kernel is using "test" environment or have "framework.test" configuration option enabled.',
-                get_class($this->kernel),
+                $this->kernel::class,
                 $this->kernel->getEnvironment(),
                 $this->kernel->isDebug() ? 'enabled' : 'disabled',
             ));
@@ -68,7 +59,7 @@ final class SymfonyDriver extends BrowserKitDriver
             throw new \RuntimeException(sprintf(
                 'Service "test.client" should be an instance of "%s", "%s" given.',
                 AbstractBrowser::class,
-                get_class($testClient),
+                $testClient::class,
             ));
         }
 

@@ -23,18 +23,10 @@ use FriendsOfBehat\SymfonyExtension\Context\Environment\Handler\ContextServiceEn
  */
 final class UninitializedSymfonyExtensionEnvironment extends StaticEnvironment implements SymfonyExtensionEnvironment
 {
-    /** @var string[] */
-    private $contexts;
-
-    /** @var ContextEnvironment */
-    private $delegatedEnvironment;
-
-    public function __construct(Suite $suite, array $contexts, ContextEnvironment $delegatedEnvironment)
+    public function __construct(Suite $suite, /** @var string[] */
+    private readonly array $contexts, private readonly ContextEnvironment $delegatedEnvironment)
     {
         parent::__construct($suite);
-
-        $this->contexts = $contexts;
-        $this->delegatedEnvironment = $delegatedEnvironment;
     }
 
     public function getServices(): array

@@ -31,19 +31,11 @@ use Symfony\Component\HttpKernel\KernelInterface;
 
 final class ContextServiceEnvironmentHandler implements EnvironmentHandler
 {
-    /** @var KernelInterface */
-    private $symfonyKernel;
-
-    /** @var EnvironmentHandler */
-    private $decoratedEnvironmentHandler;
-
     /** @var ContextInitializer[] */
     private $contextInitializers = [];
 
-    public function __construct(KernelInterface $symfonyKernel, EnvironmentHandler $decoratedEnvironmentHandler)
+    public function __construct(private readonly KernelInterface $symfonyKernel, private readonly EnvironmentHandler $decoratedEnvironmentHandler)
     {
-        $this->symfonyKernel = $symfonyKernel;
-        $this->decoratedEnvironmentHandler = $decoratedEnvironmentHandler;
     }
 
     public function registerContextInitializer(ContextInitializer $contextInitializer): void
@@ -68,7 +60,7 @@ final class ContextServiceEnvironmentHandler implements EnvironmentHandler
             /** @var object $service */
             $service = $this->getContainer()->get($serviceId);
 
-            $symfonyContexts[$serviceId] = get_class($service);
+            $symfonyContexts[$serviceId] = $service::class;
         }
 
         $delegatedSuite = $this->cloneSuiteWithoutContexts($suite, array_keys($symfonyContexts));
@@ -136,7 +128,7 @@ final class ContextServiceEnvironmentHandler implements EnvironmentHandler
             ), $suite->getName());
         }
 
-        return array_map([$this, 'normalizeContext'], $contexts);
+        return array_map($this->normalizeContext(...), $contexts);
     }
 
     private function cloneSuiteWithoutContexts(Suite $suite, array $contextsToRemove): Suite
@@ -151,9 +143,7 @@ final class ContextServiceEnvironmentHandler implements EnvironmentHandler
             ), $suite->getName());
         }
 
-        $contexts = array_filter($contexts, function ($context) use ($contextsToRemove): bool {
-            return !in_array($this->normalizeContext($context), $contextsToRemove, true);
-        });
+        $contexts = array_filter($contexts, fn($context): bool => !in_array($this->normalizeContext($context), $contextsToRemove, true));
 
         return new GenericSuite($suite->getName(), array_merge($suite->getSettings(), ['contexts' => $contexts]));
     }
@@ -181,8 +171,8 @@ final class ContextServiceEnvironmentHandler implements EnvironmentHandler
         if (!$this->supportsEnvironmentAndSubject($uninitializedEnvironment, $testSubject)) {
             throw new EnvironmentIsolationException(sprintf(
                 '"%s" does not support isolation of "%s" environment.',
-                static::class,
-                get_class($uninitializedEnvironment),
+                self::class,
+                $uninitializedEnvironment::class,
             ), $uninitializedEnvironment);
         }
     }
@@ -191,10 +181,10 @@ final class ContextServiceEnvironmentHandler implements EnvironmentHandler
     {
         try {
             $this->symfonyKernel->getBundle('FriendsOfBehatSymfonyExtensionBundle');
-        } catch (\InvalidArgumentException $exception) {
+        } catch (\InvalidArgumentException) {
             throw new \RuntimeException(sprintf(
                 'Kernel "%s" used by Behat with "%s" environment and debug %s needs to have "%s" bundle registered.',
-                get_class($this->symfonyKernel),
+                $this->symfonyKernel::class,
                 $this->symfonyKernel->getEnvironment(),
                 $this->symfonyKernel->isDebug() ? 'enabled' : 'disabled',
                 FriendsOfBehatSymfonyExtensionBundle::class,
